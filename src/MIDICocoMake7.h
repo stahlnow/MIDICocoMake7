@@ -1,7 +1,7 @@
 /*
-  GnusbuinoMIDI.h - MIDI over USB library for the Gnusbuino
-  http://gnusb.sourceforge.net
-  
+  MIDICocoMake7.h - MIDI over USB library for the MIDICocoMake7
+  https://github.com/CocoMake7/MIDICocoMake7
+
   Copyright (c) 2012 Michael Egger.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@
 #include <inttypes.h>
 #include <stdio.h> // for size_t
 
-#include "GnusbuinoMIDInotes.h"
+#include "MIDICocoMake7notes.h"
 
 /******************************************************************************
  * Definitions
@@ -84,7 +84,7 @@ public:
     size_t print(long, int = DEC);
     size_t print(unsigned long, int = DEC);
     size_t print(double, int = 2);
-	
+
 	size_t println(void);
 	size_t println(char, int = DEC);
 	size_t println(const char *);
@@ -94,18 +94,18 @@ public:
     size_t println(long, int = DEC);
     size_t println(unsigned long, int = DEC);
     size_t println(double, int = 2);
-	
-	
+
+
 	void sendMIDI(void);
 	void receiveMIDI(uint8_t,uint8_t,uint8_t);
-	
+
 	private:
 		unsigned char _midiOutData[4];
 
 		unsigned char _midiSendEnqueueIdx;
 		unsigned char _midiSendDequeueIdx;
 		unsigned char _midiSendQueue [MIDI_MAX_BUFFER * 3];
-	
+
 		unsigned char _midiRecvEnqueueIdx;
 		unsigned char _midiRecvDequeueIdx;
 		unsigned char _midiRecvQueue [MIDI_MAX_BUFFER * 3];

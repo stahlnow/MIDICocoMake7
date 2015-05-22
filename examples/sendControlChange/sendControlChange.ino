@@ -1,10 +1,10 @@
 /*---------------------------------------------------------------------------------------------
 
   Gnusbuino MIDI Library 2012 by Michael Egger
- 
+
   SEND CONTROL CHANGE EXAMPLE
-  Read a potentiometer and send its value as a continuous controller message  
-  
+  Read a potentiometer and send its value as a continuous controller message
+
   This example code is in the public domain.
 
 --------------------------------------------------------------------------------------------- */
@@ -13,7 +13,7 @@
  * one side pin (either one) to ground,  the other side pin to +5V
  */
 
-#include "GnusbuinoMIDI.h"            // you have to include the Gnusbuino MIDI library
+#include "MIDICocoMake7.h"  // you have to include the MIDI CocoMake7 library
 
 #define SENSOR_PIN 2
 
@@ -26,16 +26,16 @@ void setup() {               // nothing to do in setup, pins are inputs by defau
 
 
 void loop() {
-  
+
   sensorValue = analogRead(SENSOR_PIN) / 8;                       // analogRead returns 0-1023, we need 0-127
-  if (sensorValue != sentValue) {                         // compare actual readout to last sent value    
-       
+  if (sensorValue != sentValue) {                         // compare actual readout to last sent value
+
       //MIDI.write(MIDI_CONTROLCHANGE, controller number , controller value )
 
         MIDI.write(MIDI_CONTROLCHANGE,1,sensorValue);     // put new control change message into MIDI sending queue
         sentValue = sensorValue;                          // store last sent value
   }
-  
+
     delay(10);              // give some time for sending, otherwhise the MIDI queue could fill up
 }
 
@@ -43,8 +43,8 @@ void loop() {
 /*---------------------------------------------------------------------------------------------
 Some exercises:
 
-  - how small can the delay be without stalling the transmission ? 
+  - how small can the delay be without stalling the transmission ?
   - use two control channels to augment the resolution
   - add more potentiometers  (using an array for the values?)
-  
+
 */

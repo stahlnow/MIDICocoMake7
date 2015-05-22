@@ -1,5 +1,5 @@
 /*
-  MIDI.cpp - MIDI library for Midi-Gnusbuino
+  MIDICocoMake7.cpp - MIDI library for MIDICocoMake7
   Copyright (c) 2012 Michael Egger, me@anyma.ch
 
   This library is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@
  ******************************************************************************/
 
 #include "Arduino.h"
-#include "GnusbuinoMIDI.h"
+#include "MIDICocoMake7.h"
 #include "usbdrv.h"
 
 
@@ -31,7 +31,7 @@
 
 
 /*---------------------------------------------------------------------------*/
-/* PUT MIDI DATA INTO SEND-QUEUE                                             */ 
+/* PUT MIDI DATA INTO SEND-QUEUE                                             */
 /*---------------------------------------------------------------------------*/
 void MIDIClass::write(unsigned char command, unsigned char pitch,unsigned char velocity){
 
@@ -47,7 +47,7 @@ void MIDIClass::write(unsigned char command, unsigned char pitch,unsigned char v
 	_midiSendQueue[_midiSendEnqueueIdx++] = command;
 	_midiSendQueue[_midiSendEnqueueIdx++] = pitch;
 	_midiSendQueue[_midiSendEnqueueIdx++] = velocity;
-	
+
 	_midiSendEnqueueIdx %= MIDI_MAX_BUFFER * 3;
 }
 
@@ -173,7 +173,7 @@ void MIDIClass::receiveMIDI(unsigned char command, unsigned char pitch,unsigned 
 	_midiRecvQueue[_midiRecvEnqueueIdx++] = command;
 	_midiRecvQueue[_midiRecvEnqueueIdx++] = pitch;
 	_midiRecvQueue[_midiRecvEnqueueIdx++] = velocity;
-	
+
 	_midiRecvEnqueueIdx %= MIDI_MAX_BUFFER * 3;
 
 }
@@ -189,7 +189,7 @@ unsigned char MIDIClass::read(MIDIMessage* msg) {
 			_midiRecvQueue[_midiRecvDequeueIdx++] = 0;
 
 			_midiRecvDequeueIdx %= MIDI_MAX_BUFFER * 3;
-			return 1;			
+			return 1;
 	} else {
 		return 0;
 	}
@@ -198,30 +198,30 @@ unsigned char MIDIClass::read(MIDIMessage* msg) {
 void MIDIClass::sendMIDI(void) {
 
 	if (usbInterruptIsReady()) {	// ready to send some MIDI ?
-	
+
 	// Sysex handling:
 			// Sysex have to be split up into multiple packets of 32 bits ( 1 byte status, 3 bytes payload )
-			// examples: 
+			// examples:
 			// message with 4 bytes		00 01 02 03 		means sysex message		F0 00 01 02 03 F7 			becomes 	04 F0 00 01 - 07 02 03 F7
 			// message with 5 bytes		00 01 02 03 04								F0 00 01 02 03 04 F7 					04 F0 00 01 - 04 02 03 04 - 05 F7 00 00
 			// message with 6 bytes		00 01 02 03 04 05							F0 00 01 02 03 04 05 F7 				04 F0 00 01 - 04 02 03 04 - 06 05 F7 00
-			
 
-			
+
+
 	// Sysex handling:
 			// Sysex have to be split up into multiple packets of 32 bits ( 1 byte status, 3 bytes payload )
-			// examples: 
+			// examples:
 			// message with 4 bytes		00 01 02 03 		means sysex message		F0 00 01 02 03 F7 			becomes 	04 F0 00 01 - 07 02 03 F7
 			// message with 5 bytes		00 01 02 03 04								F0 00 01 02 03 04 F7 					04 F0 00 01 - 04 02 03 04 - 05 F7 00 00
 			// message with 6 bytes		00 01 02 03 04 05							F0 00 01 02 03 04 05 F7 				04 F0 00 01 - 04 02 03 04 - 06 05 F7 00
-			
 
-			
+
+
 			if (_sysex_len) {
-				
+
 				if (_sysex_len > 3) {
 					this->_midiOutData[0] = 0x04;							//	USB-MIDI: Sysex on cable 0
-					
+
 					if (_sysex_idx == 0) {
 						this->_midiOutData[1] = 0xF0;						// 	MIDI Sysex message
 					} else {
@@ -231,21 +231,21 @@ void MIDIClass::sendMIDI(void) {
 					this->_midiOutData[2] = _sysex_buffer[_sysex_idx++];
 					this->_midiOutData[3] = _sysex_buffer[_sysex_idx++];
 					_sysex_len -= 2;
-					
+
 				} else {
-				
+
 					if (_sysex_len == 3) {
 						this->_midiOutData[0] = 0x07;										//	USB-MIDI: SysEx ends with following three bytes.
 						this->_midiOutData[1] = _sysex_buffer[_sysex_idx++];
 						this->_midiOutData[2] = _sysex_buffer[_sysex_idx++];
 						this->_midiOutData[3] = 0xF7;
-						
+
 					} else if (_sysex_len == 2) {
 						this->_midiOutData[0] = 0x06;									//	USB-MIDI: SysEx ends with following two bytes.
 						this->_midiOutData[1] = _sysex_buffer[_sysex_idx++];
 						this->_midiOutData[2] = 0xF7;
 						this->_midiOutData[3] = 0x00;
-						
+
 					} else {
 						this->_midiOutData[0] = 0x05;															//	USB-MIDI: SysEx ends with following one byte.
 						this->_midiOutData[1] = 0xF7;
@@ -256,13 +256,13 @@ void MIDIClass::sendMIDI(void) {
 					_sysex_idx = 0;
 					free(_sysex_buffer);
 				}
-				
+
 				usbSetInterrupt(this->_midiOutData, 4);
 
 				return;
 		}
-			
-			
+
+
 		if (_midiSendEnqueueIdx != _midiSendDequeueIdx) {
 
 			unsigned char cmd;
@@ -281,7 +281,7 @@ void MIDIClass::sendMIDI(void) {
 			_midiSendDequeueIdx %= MIDI_MAX_BUFFER * 3;
 
 			usbSetInterrupt(this->_midiOutData, 4);
-			
+
 		}
 	}
 }

@@ -1,17 +1,17 @@
 /*---------------------------------------------------------------------------------------------
 
   Gnusbuino MIDI Library 2012 by Michael Egger
- 
+
   SEND NOTES EXAMPLE
   Send a chord of three notes to the host over MIDI
- 
+
   This example code is in the public domain.
 
 --------------------------------------------------------------------------------------------- */
 
 
 
-#include <GnusbuinoMIDI.h>        // you MUST include the Gnusbuino MIDI library
+#include "MIDICocoMake7.h"  // you have to include the MIDI CocoMake7 library
 
 unsigned long lastTime;            // variable to store the last time we sent a chord
 
@@ -24,12 +24,12 @@ void loop() {
   if (millis()-lastTime >= 500)  {             // every 500 miliseconds = 2 times per second
 
         //MIDI.write(MIDI_NOTEON, note , velocity )
-        
+
          MIDI.write(MIDI_NOTEON,60,127);            // put three notes into the MIDI send queue
          MIDI.write(MIDI_NOTEON,64,127);
          MIDI.write(MIDI_NOTEON,67,127);
-         lastTime = millis();      
-  }   
+         lastTime = millis();
+  }
 }
 
 
@@ -45,5 +45,5 @@ Some exercises:
   - add buttons to build a keyboard
   - play arpeggios
   - build a subroutine that can play a lot of chords
-  
+
 */
