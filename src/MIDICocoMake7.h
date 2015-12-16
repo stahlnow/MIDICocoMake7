@@ -49,7 +49,7 @@
 #define MIDI_CONTINUE			0xFB
 #define MIDI_STOP				0xFC
 
-#if defined(__AVR_ATtiny85__)
+#if defined(__AVR_ATtiny85__) || defined(__AVR_ATtiny84__)
 	#define MIDI_MAX_BUFFER		10
 #else
 	#define MIDI_MAX_BUFFER		64
